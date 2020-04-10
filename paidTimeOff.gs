@@ -136,7 +136,7 @@ function getEmployeeInfo(name){
 
 // メールアドレス取得
 function getMailAddress(employeeName){
-  var sheet = getSheet('1BFQtPLNbocGD-T4laT6DD1BAlym21sJdhgxl4Rl8YG4','mail_address_list');
+  var sheet = getSheet('12yYRdZcLM_tCCGUtZJhSQtt0VdReV3C71JHlUSSLFII','mail_address_list');
   var row = findRow(sheet,employeeName,2);
   var col = findColumn(sheet,'メールアドレス',1);
   return sheet.getRange(row, col).getValue();
@@ -144,7 +144,7 @@ function getMailAddress(employeeName){
 
 // スプレッドシートID取得
 function getSpreadId(name){
-  var sheet = getSheet('1BFQtPLNbocGD-T4laT6DD1BAlym21sJdhgxl4Rl8YG4','spread_list');
+  var sheet = getSheet('12yYRdZcLM_tCCGUtZJhSQtt0VdReV3C71JHlUSSLFII','spread_list');
   var row = findRow(sheet,name,2);
   var col = findColumn(sheet,'スプレッドシートID',1);
   return sheet.getRange(row, col).getValue();
