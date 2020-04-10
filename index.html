@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <?!=include("index.css")?>
+    <?!=include("index.js")?>
+  </head>
+  <body>
+    <h2>有給申請フォーム</h2>
+    <button onclick="addChildCreate()">日付を追加</button>
+  <form class="form-horizontal" method="post" action="https://script.google.com/a/forge.co.jp/macros/s/AKfycby0EZaemCpLIXw8uiOx65H5UcSjJsr_paom_oq8d3E/exec">
+    <div class="form-group">
+      <label for="employee-name" class="control-label col-xs-2">社員名:</label>
+      <div class="col-xs-3">
+        <select name="employee-name" class="form-control">
+          <option value="社員1">社員1</option>
+          <option value="社員2">社員2</option>
+          <option value="社員3">社員3</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="date" class="control-label col-xs-2">日付：</label>
+      <div class="col-xs-3" id="date-parent">
+        <input type="date" class="form-control" min="2020-04-01" name="date1"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="period" class="control-label col-xs-2">期間の場合は以下を記載</label>
+    </div>
+    <div class="form-group">
+      <label for="start-date" class="control-label col-xs-2">開始日:</label>
+      <div class="col-xs-3">
+        <input type="date" class="form-control col-xs-2" min="2020-04-01" name="start-date"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="end-date" class="control-label col-xs-2">終了日:</label>
+      <div class="col-xs-3">
+        <input type="date" class="form-control col-xs-2" min="2020-04-01" name="end-date"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="approve-name" class="control-label col-xs-2">承認者:</label>
+      <div class="col-xs-3">
+        <select name="approve-name" class="form-control">
+          <option value="社員1">社員1</option>
+          <option value="社員2">社員2</option>
+          <option value="社員3">社員3</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-xs-offset-2 col-xs-10">
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+    </div>
+  </form>
+  </body>
+</html>
