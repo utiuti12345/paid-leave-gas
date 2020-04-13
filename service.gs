@@ -13,18 +13,24 @@ function doPost(e){
   var endDate = e.parameter.end_date;
   var approveName = e.parameter.approve_name;
   
-  var employeeInfo = getEmployeeInfo(employeeName);
-  var approver = getApprover(approveName);
+//  var dates = getDates(e.parameter);
+//  console.log(dates);
   
-  var dateLeave = "";
+  var employeeInfo = new EmployeeInfo(employeeName,getSpreadId(employeeName));
+  var approver = new ApproveInfo(employeeName,getMailAddress(employeeName));
+  
+  var paidLeaveList = "";
   for(var i=1;;i++){
     if(e.parameter['date'+i]===undefined){
       break;
     }
-    dateLeave += e.parameter['date'+i] + ","
-    updatePaidTimeSheet(employeeInfo.name,employeeInfo.spreadId,e.parameter['date'+i]);
+    var paidLeaveDate = new PaidLeaveDate(e.parameter['date'+i]);
+    if(!(paidLeaveDate.isHoliday() || paidLeaveDate.isWeekend())){
+      paidLeaveList += paidLeaveDate.date + ","
+      updatePaidTimeSheet(employeeInfo.name,employeeInfo.spreadId,paidLeaveDate.date);
+    }
   }
   
-  var bodies = generateBodies(employeeInfo.name,dateLeave);
-  sendMail(approver.mailAddress, subject, bodies.plain,bodies.html);
+  var bodies = generateBodies(employeeInfo.employeeName,paidLeaveList);
+  sendMail(approver.mailAddress,subject,bodies.plain,bodies.html);
 }
