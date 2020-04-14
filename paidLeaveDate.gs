@@ -18,6 +18,13 @@
     return count === 1;
   };
   
+  PaidLeaveDate.prototype.formatDate = function () {
+    const year = this.date.getFullYear();
+    const month = this.date.getMonth() + 1;
+    const day = this.date.getDate();
+    return year + "-" + month + "-" + day;
+  };
+  
    /**
    * 土日判定
    * @returns {boolean}

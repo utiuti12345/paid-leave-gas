@@ -1,8 +1,8 @@
 // 固定値
 const subject = "有給休暇申請";
 const masterSpreadSheetId = "12yYRdZcLM_tCCGUtZJhSQtt0VdReV3C71JHlUSSLFII";
-const mailAddressListSheet = "mail_address_list";
-const spreadListSheet = "spread_list";
+const approveList = "approve_list";
+const employeeListSheet = "employee_list";
 
 // 有給ステータス
 function paidStatus(){
@@ -59,7 +59,7 @@ function getAnswer(itemResponses){
 }
 
 // 送信する本文の作成
-function generateBodies(employeeName,paidDateTime){
+function generateAprroveBodies(employeeName,paidDateTime){
   var plain = '';
   plain += '有給休暇申請がありました。\n\n';
   plain += '・社員名: ' + employeeName + '\n';
@@ -79,13 +79,43 @@ function generateBodies(employeeName,paidDateTime){
   };
 }
 
-// 日付取得
-function getDates(parameter){
+// 送信する本文の作成
+function generateApplicantBodies(employeeName,paidDateTime,balancePaidLeave,spreadId){
+  var plain = '';
+  plain += '有給休暇申請がありました。\n\n';
+  plain += '・社員名: ' + employeeName + '\n';
+  plain += '・取得日時: ' + paidDateTime + '\n';
+  plain += '・残り有給日数: ' +  balancePaidLeave + '\n';
+  plain += '・有給確認シート: ' + 'https://docs.google.com/spreadsheets/d/' + spreadId + '\n';
+ 
+  var html = '';
+  html += '<h1>有給休暇申請のお知らせ</h1>';
+  html += '<p>有給休暇申請がありました。</p>';
+  html += '<ul>';
+  html += '<li>社員名: ' + employeeName + '</li>';
+  html += '<li>取得日時: ' + paidDateTime + '</li>';
+  html += '<li>残り有給日数: ' +  balancePaidLeave + '</li>';
+  html += '<li>有給確認シート: ' + 'https://docs.google.com/spreadsheets/d/' + spreadId + '</li>';
+  html += '</ul>';
+  
+  return {
+    plain: plain,
+    html: html
+  };
+}
+
+// パラメーター取得
+function getParameter(parameter){
+  var employeeName = parameter.employee_name;
+  var approveName = parameter.approve_name;
   var dates = [];
   if(parameter.start_date === "" && parameter.end_date === ""){
     for(var i=1;;i++){
-      if(parameter['date'+i]===undefined){
+      if(parameter['date'+i] === undefined){
         break;
+      }
+      else if(parameter['date'+i] === ''){
+        continue;
       }
       dates.push(parameter['date'+i]);
     }
@@ -93,24 +123,33 @@ function getDates(parameter){
   else{
     var endDate = new Date(parameter.end_date);
     dates.push(parameter.start_date);
-    for(var i=1;i<10;i++){
-      var dt = new Date(parameter.start_date);
-      var tommorow = dt.setDate(dt.getDate() + i);
+    for(var i=1;;i++){
+      var tommorow = new Date(parameter.start_date);
+      tommorow.setDate(tommorow.getDate() + i);
       dates.push(tommorow.toString());
-      console.log(tommorow.toString());
-      console.log(parameter.end_date);
-      if(tommorow.toString() === endDate){
+      if(tommorow.getTime() === endDate. getTime()){
         break;
       }
     }
   }
   
-  return dates;
+  return {
+    employeeName: employeeName,
+    dates: dates,
+    approveName: approveName
+  };
 }
 
 // スプレッドシート取得
 function getSheet(spreadId,sheetName){
   return SpreadsheetApp.openById(spreadId).getSheetByName(sheetName);
+}
+
+// 有給休暇シートから残日数の取得
+function getBalancePaidTime(employeeName,spreadId,paidDateTime){
+  var date = new Date(paidDateTime);
+  var sheet = getSheet(spreadId,date.getFullYear())
+  return sheet.getRange(6, 14).getValue();
 }
 
 // 有給休暇シートの更新
@@ -122,17 +161,25 @@ function updatePaidTimeSheet(employeeName,spreadId,paidDateTime){
   sheet.getRange(row, col).setValue(paidStatus().digestion);
 }
 
-// メールアドレス取得
-function getMailAddress(employeeName){
-  var sheet = getSheet(masterSpreadSheetId,mailAddressListSheet);
-  var row = findRow(sheet,employeeName,2);
+// 社員シートからメールアドレス取得
+function getMailAddressByEmployeeSheet(name){
+  var sheet = getSheet(masterSpreadSheetId,employeeListSheet);
+  var row = findRow(sheet,name,2);
+  var col = findColumn(sheet,'メールアドレス',1);
+  return sheet.getRange(row, col).getValue();
+}
+
+// 承認者シートからメールアドレス取得
+function getMailAddressByApproveSheet(name){
+  var sheet = getSheet(masterSpreadSheetId,approveList);
+  var row = findRow(sheet,name,2);
   var col = findColumn(sheet,'メールアドレス',1);
   return sheet.getRange(row, col).getValue();
 }
 
 // スプレッドシートID取得
 function getSpreadId(name){
-  var sheet = getSheet(masterSpreadSheetId,spreadListSheet);
+  var sheet = getSheet(masterSpreadSheetId,employeeListSheet);
   var row = findRow(sheet,name,2);
   var col = findColumn(sheet,'スプレッドシートID',1);
   return sheet.getRange(row, col).getValue();

@@ -8,29 +8,25 @@ function include(filename){
 }
 
 function doPost(e){
-  var employeeName = e.parameter.employee_name;
-  var startDate = e.parameter.start_date;
-  var endDate = e.parameter.end_date;
-  var approveName = e.parameter.approve_name;
+  var paramater = getParameter(e.parameter);
   
-//  var dates = getDates(e.parameter);
-//  console.log(dates);
-  
-  var employeeInfo = new EmployeeInfo(employeeName,getSpreadId(employeeName));
-  var approver = new ApproveInfo(employeeName,getMailAddress(employeeName));
+  var employeeInfo = new EmployeeInfo(paramater.employeeName,getSpreadId(paramater.employeeName),getMailAddressByEmployeeSheet(paramater.employeeName));
+  var approver = new ApproveInfo(paramater.employeeName,getMailAddressByApproveSheet(paramater.employeeName));
   
   var paidLeaveList = "";
-  for(var i=1;;i++){
-    if(e.parameter['date'+i]===undefined){
-      break;
-    }
-    var paidLeaveDate = new PaidLeaveDate(e.parameter['date'+i]);
+  for(var i=0;i<paramater.dates.length;i++){
+    var paidLeaveDate = new PaidLeaveDate(paramater.dates[i]);
     if(!(paidLeaveDate.isHoliday() || paidLeaveDate.isWeekend())){
-      paidLeaveList += paidLeaveDate.date + ","
+      paidLeaveList += paidLeaveDate.formatDate() + " "
       updatePaidTimeSheet(employeeInfo.name,employeeInfo.spreadId,paidLeaveDate.date);
     }
   }
   
-  var bodies = generateBodies(employeeInfo.employeeName,paidLeaveList);
-  sendMail(approver.mailAddress,subject,bodies.plain,bodies.html);
+  var aprroveBodies = generateAprroveBodies(employeeInfo.employeeName,paidLeaveList);
+  sendMail(approver.mailAddress,subject,aprroveBodies.plain,aprroveBodies.html);
+  
+  var applicantBodies = generateApplicantBodies(employeeInfo.employeeName,paidLeaveList,getBalancePaidTime(employeeInfo.employeeName,employeeInfo.spreadId,paidLeaveDate.date),employeeInfo.spreadId);
+  sendMail(employeeInfo.mailAddress,subject,applicantBodies.plain,applicantBodies.html);
+  
+  return HtmlService.createHtmlOutput("完了しました。メールを確認してください。");
 }

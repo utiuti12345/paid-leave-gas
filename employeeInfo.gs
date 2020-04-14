@@ -4,9 +4,10 @@
    * コンストラクタ 引数(社員名,スプレッドシート)
    * @constructor
    */
-  var EmployeeInfo = function (employeeName,spreadId) {
+  var EmployeeInfo = function (employeeName,spreadId,mailAddress) {
     this.employeeName = employeeName;
     this.spreadId = spreadId;
+    this.mailAddress = mailAddress;
   };
   
   global.EmployeeInfo = EmployeeInfo;
