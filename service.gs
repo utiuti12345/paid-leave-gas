@@ -18,14 +18,14 @@ function doPost(e){
     var paidLeaveDate = new PaidLeaveDate(paramater.dates[i]);
     if(!(paidLeaveDate.isHoliday() || paidLeaveDate.isWeekend())){
       paidLeaveList += paidLeaveDate.formatDate() + " "
-      updatePaidTimeSheet(employeeInfo.name,employeeInfo.spreadId,paidLeaveDate.date);
+      updatePaidTimeSheet(employeeInfo.spreadId,paidLeaveDate.date);
     }
   }
   
   var aprroveBodies = generateAprroveBodies(employeeInfo.employeeName,paidLeaveList);
   sendMail(approver.mailAddress,subject,aprroveBodies.plain,aprroveBodies.html);
   
-  var applicantBodies = generateApplicantBodies(employeeInfo.employeeName,paidLeaveList,getBalancePaidTime(employeeInfo.employeeName,employeeInfo.spreadId,paidLeaveDate.date),employeeInfo.spreadId);
+  var applicantBodies = generateApplicantBodies(employeeInfo.employeeName,paidLeaveList,getBalancePaidTime(employeeInfo.spreadId),employeeInfo.spreadId);
   sendMail(employeeInfo.mailAddress,subject,applicantBodies.plain,applicantBodies.html);
   
   return HtmlService.createHtmlOutput("完了しました。メールを確認してください。");

@@ -1,5 +1,6 @@
 // 固定値
 const subject = "有給休暇申請";
+const templateSpreadSheetId = "1WVf4yj06qIasga3nOHMn8LAKi2b3odBo22m6H_zf8sM";
 const masterSpreadSheetId = "12yYRdZcLM_tCCGUtZJhSQtt0VdReV3C71JHlUSSLFII";
 const approveList = "approve_list";
 const employeeListSheet = "employee_list";
@@ -145,20 +146,37 @@ function getSheet(spreadId,sheetName){
   return SpreadsheetApp.openById(spreadId).getSheetByName(sheetName);
 }
 
+// シートコピー
+function copySheet(sheet,destSpreadId){
+  var destination = SpreadsheetApp.openById(destSpreadId);
+  sheet.copyTo(destination);
+}
+
 // 有給休暇シートから残日数の取得
-function getBalancePaidTime(employeeName,spreadId,paidDateTime){
+function getBalancePaidTime(spreadId,paidDateTime){
   var date = new Date(paidDateTime);
   var sheet = getSheet(spreadId,date.getFullYear())
   return sheet.getRange(6, 14).getValue();
 }
 
 // 有給休暇シートの更新
-function updatePaidTimeSheet(employeeName,spreadId,paidDateTime){
+function updatePaidTimeSheet(spreadId,paidDateTime){
   var date = new Date(paidDateTime);
   var sheet = getSheet(spreadId,date.getFullYear());
   var row = findRow(sheet,(date.getMonth()+1) + "月",2);
   var col = findColumn(sheet,date.getDate(),8);
   sheet.getRange(row, col).setValue(paidStatus().digestion);
+}
+
+// 社員シートから名前取得
+function getEmployeeNames(){
+  var sheet = getSheet(masterSpreadSheetId,employeeListSheet);
+  var lastRow = sheet.getDataRange().getLastRow();
+  var names = [];
+  for(var i = 2; i < lastRow + 1; i++){
+    names.push(sheet.getRange(i, 2).getValue())
+  }
+  return names;
 }
 
 // 社員シートからメールアドレス取得
@@ -167,6 +185,31 @@ function getMailAddressByEmployeeSheet(name){
   var row = findRow(sheet,name,2);
   var col = findColumn(sheet,'メールアドレス',1);
   return sheet.getRange(row, col).getValue();
+}
+
+// 社員シートから入社日取得
+function getJoinsCompanyByEmployeeSheet(name){
+  var sheet = getSheet(masterSpreadSheetId,employeeListSheet);
+  var row = findRow(sheet,name,2);
+  var col = findColumn(sheet,'入社日',1);
+  return sheet.getRange(row, col).getValue();
+}
+
+// 今年の有給日数を取得
+function getPaidLeave(joiningDate){
+  let jd = new Date(joiningDate);
+  let now = new Date();
+  let ms = now.getTime() - jd.getTime();
+  let lengthService = Math.floor(ms / (1000*60*60*24*365));
+  switch(lengthService) {
+      case 6 : return 10;
+      case 18 : return 11;
+      case 30 : return 12;
+      case 42 : return 14;
+      case 54 : return 16;
+      case 66 : return 18;
+      case 78 : return 20;
+  }
 }
 
 // 承認者シートからメールアドレス取得
