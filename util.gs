@@ -1,7 +1,7 @@
 // 固定値
 const subject = "有給休暇申請";
-const templateSpreadSheetId = "1WVf4yj06qIasga3nOHMn8LAKi2b3odBo22m6H_zf8sM";
-const masterSpreadSheetId = "12yYRdZcLM_tCCGUtZJhSQtt0VdReV3C71JHlUSSLFII";
+const templateSpreadSheetId = "1zZW-gTaDx6p52jekh5Km5YVdXrxFJ9wEjsKK-E-ym8g";
+const masterSpreadSheetId = "1qc1AZf7aFBbgbmddNi5jF2wcvdHNxNwxg3jMuJLyQj0";
 const approveList = "approve_list";
 const employeeListSheet = "employee_list";
 
@@ -152,14 +152,6 @@ function copySheet(sheet,destSpreadId){
   return sheet.copyTo(destination);
 }
 
-function copySheetTest(){
-  let sheet = getSheet(templateSpreadSheetId,"format");
-  var copy = copySheet(sheet,"1dxelN92ddraPlzMHCJ3FjatvvwPVBpXTUhO7eS9UaYg");
-  console.log(copy);
-  moveSheet(copy,"aaaa");
-  updatePaidLeave("1dxelN92ddraPlzMHCJ3FjatvvwPVBpXTUhO7eS9UaYg",12,13,"sasa");
-}
-
 // シート名変更
 function moveSheet(sheet,rename){
   sheet.setName(rename);
@@ -182,8 +174,16 @@ function updatePaidLeave(spreadId,currentBalancePaidLeave,paidLeave,employeeName
 // 有給休暇シートから残日数の取得
 function getBalancePaidLeave(spreadId,paidDateTime){
   var date = new Date(paidDateTime);
-  var sheet = getSheet(spreadId,date.getFullYear())
+  var sheet = getSheet(spreadId,date.getFullYear());
   return sheet.getRange(6, 14).getValue();
+}
+
+function getBalancePaidLeaveTest(){
+  var lastDate = new Date();
+  lastDate.setFullYear(lastDate.getFullYear() - 1);
+  let lastYear = lastDate.getFullYear();
+  var bpl = getBalancePaidLeave("1X0KQ5SrokGDuf1Uige2njkdOtR6gZxG3lijgLKfQ3uc","2019-01-01");
+  console.log(bpl);
 }
 
 // 有給休暇シートの更新
@@ -198,6 +198,17 @@ function updatePaidTimeSheet(spreadId,paidDateTime){
 // 社員シートから名前取得
 function getEmployeeNames(){
   var sheet = getSheet(masterSpreadSheetId,employeeListSheet);
+  var lastRow = sheet.getDataRange().getLastRow();
+  var names = [];
+  for(var i = 2; i < lastRow + 1; i++){
+    names.push(sheet.getRange(i, 2).getValue())
+  }
+  return names;
+}
+
+// 承認者シートから名前取得
+function getApproveNames(){
+  var sheet = getSheet(masterSpreadSheetId,approveList);
   var lastRow = sheet.getDataRange().getLastRow();
   var names = [];
   for(var i = 2; i < lastRow + 1; i++){

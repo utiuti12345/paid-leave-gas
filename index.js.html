@@ -2,21 +2,76 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 <script>
-    var idx = 2;
+document.onload = load();
 
-    // 子要素を追加(新規)
-    function addChildCreate() {
-      var child = document.createElement("input");
-      addChild(child);
-    }
+var idx = 2;
+
+// 子要素を追加(新規)
+function addChildCreate() {
+   var child = document.createElement("input");
+   addChild(child);
+}
     
-    // 子要素を追加(共通)
-    function addChild(child) {
-      child.setAttribute("type", "date");
-      child.setAttribute("name", "date" + idx);
-      child.setAttribute("class", "form-control");
-      idx++;
-      child = document.getElementById("date-parent").appendChild(child);
-      console.log(child);
+// 子要素を追加(共通)
+function addChild(child) {
+   child.setAttribute("type", "date");
+   child.setAttribute("name", "date" + idx);
+   child.setAttribute("class", "form-control");
+   idx++;
+   child = document.getElementById("date-parent").appendChild(child);
+   console.log(child);
+}
+    
+function getEmployeeList() {
+    try {
+        google.script.run
+            .withSuccessHandler(function(result) {
+                console.log("result", result);
+                
+                var select = document.getElementById('employee_id');
+                for (var i = 0; i < result.length; i++) {
+                    option = document.createElement('option');
+                    option.setAttribute('value', i + 1);
+                    option.innerHTML = result[i];
+                    select.appendChild(option);
+                }
+            })
+            .withFailureHandler(function(result) {
+                toastr.error('リストの取得に失敗しました。', result);
+            })
+            .getEmployeeNames();
+
+    } catch (e) {
+        toastr.error(e);
     }
+}
+
+function getApproveList() {
+    try {
+        google.script.run
+            .withSuccessHandler(function(result) {
+                console.log("result", result);
+                
+                var select = document.getElementById('approve_id');
+                for (var i = 0; i < result.length; i++) {
+                    option = document.createElement('option');
+                    option.setAttribute('value', i + 1);
+                    option.innerHTML = result[i];
+                    select.appendChild(option);
+                }
+            })
+            .withFailureHandler(function(result) {
+                toastr.error('リストの取得に失敗しました。', result);
+            })
+            .getApproveNames();
+
+    } catch (e) {
+        toastr.error(e);
+    }
+}
+
+function load(){
+  getEmployeeList();
+  getApproveList();
+}
 </script>

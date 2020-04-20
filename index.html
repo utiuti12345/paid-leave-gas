@@ -8,14 +8,11 @@
   <body>
     <h2>有給申請フォーム</h2>
     <button onclick="addChildCreate()">日付を追加</button>
-    <form class="form-horizontal" method="post" action="https://script.google.com/a/forge.co.jp/macros/s/AKfycby0EZaemCpLIXw8uiOx65H5UcSjJsr_paom_oq8d3E/exec">
+    <form class="form-horizontal" method="post" action="https://script.google.com/a/forge.co.jp/macros/s/AKfycbycVDj9XMS-lhxfBnTMpao7LDt6LgsD7x4HSAL5GyOTK9CSelg/exec">
     <div class="form-group">
       <label for="employee-name" class="control-label col-xs-2">社員名:</label>
       <div class="col-xs-3">
-        <select name="employee_name" class="form-control">
-          <option value="社員1">社員1</option>
-          <option value="社員2">社員2</option>
-          <option value="社員3">社員3</option>
+        <select name="employee_name" id="employee_id" class="form-control">
         </select>
       </div>
     </div>
@@ -43,10 +40,7 @@
     <div class="form-group">
       <label for="approve-name" class="control-label col-xs-2">承認者:</label>
       <div class="col-xs-3">
-        <select name="approve_name" class="form-control">
-          <option value="社員1">社員1</option>
-          <option value="社員2">社員2</option>
-          <option value="社員3">社員3</option>
+        <select name="approve_name" id="approve_id" class="form-control">
         </select>
       </div>
     </div>
