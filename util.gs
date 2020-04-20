@@ -149,11 +149,38 @@ function getSheet(spreadId,sheetName){
 // シートコピー
 function copySheet(sheet,destSpreadId){
   var destination = SpreadsheetApp.openById(destSpreadId);
-  sheet.copyTo(destination);
+  return sheet.copyTo(destination);
+}
+
+function copySheetTest(){
+  let sheet = getSheet(templateSpreadSheetId,"format");
+  var copy = copySheet(sheet,"1dxelN92ddraPlzMHCJ3FjatvvwPVBpXTUhO7eS9UaYg");
+  console.log(copy);
+  moveSheet(copy,"aaaa");
+  updatePaidLeave("1dxelN92ddraPlzMHCJ3FjatvvwPVBpXTUhO7eS9UaYg",12,13,"sasa");
+}
+
+// シート名変更
+function moveSheet(sheet,rename){
+  sheet.setName(rename);
+}
+
+// 有給休暇シートの繰越分,本年度を更新
+function updatePaidLeave(spreadId,currentBalancePaidLeave,paidLeave,employeeName,year){
+  var date = new Date();
+  let sheet = getSheet(spreadId,year);
+  // 繰越分
+  sheet.getRange(6, 8).setValue(currentBalancePaidLeave);
+  // 本年度
+  sheet.getRange(6, 10).setValue(paidLeave);
+  // タイトル修正
+  sheet.getRange(2,2).setValue(date.getFullYear() + "年度 有給休暇管理表");
+  // 名前修正
+  sheet.getRange(6,5).setValue(employeeName);
 }
 
 // 有給休暇シートから残日数の取得
-function getBalancePaidTime(spreadId,paidDateTime){
+function getBalancePaidLeave(spreadId,paidDateTime){
   var date = new Date(paidDateTime);
   var sheet = getSheet(spreadId,date.getFullYear())
   return sheet.getRange(6, 14).getValue();
@@ -201,15 +228,34 @@ function getPaidLeave(joiningDate){
   let now = new Date();
   let ms = now.getTime() - jd.getTime();
   let lengthService = Math.floor(ms / (1000*60*60*24*365));
-  switch(lengthService) {
-      case 6 : return 10;
-      case 18 : return 11;
-      case 30 : return 12;
-      case 42 : return 14;
-      case 54 : return 16;
-      case 66 : return 18;
-      case 78 : return 20;
+  
+  if(lengthService > 0 && lengthService < 6){
+    return 0;
+  }else if(lengthService > 6 && lengthService < 18){
+    return 10;
+  }else if(lengthService > 18 && lengthService < 30){
+    return 11;
+  }else if(lengthService > 30 && lengthService < 42){
+    return 12;
+  }else if(lengthService > 42 && lengthService < 54){
+    return 14;
+  }else if(lengthService > 54 && lengthService < 66){
+    return 16;
+  }else if(lengthService > 66 && lengthService < 78){
+    return 18;
+  }else{
+    return 20;
   }
+  
+//  switch(lengthService) {
+//      case 6 : return 10;
+//      case 18 : return 11;
+//      case 30 : return 12;
+//      case 42 : return 14;
+//      case 54 : return 16;
+//      case 66 : return 18;
+//      case 78 : return 20;
+//  }
 }
 
 // 承認者シートからメールアドレス取得

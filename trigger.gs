@@ -10,15 +10,21 @@ function autoMail(e){
 }
 
 function autoGrantPaidLeave(){
-  let sheet = getSheet(templateSpreadSheetId,"2020");
+  let sheet = getSheet(templateSpreadSheetId,"format");
   let employeeNames = getEmployeeNames();
+  let date = new Date();
+  let year = date.getFullYear();
   employeeNames.forEach((name) => {
     let spreadId = getSpreadId(name);
-    copySheet(sheet,spreadId);
-    let JoiningDate = getJoinsCompanyByEmployeeSheet(name);
-    
-    let currentBalancePaidTime = getBalancePaidTime(name);
-    let newBalancePaidTime = currentBalancePaidTime;
+    var copy = copySheet(sheet,spreadId);
+    moveSheet(copy,year);
+    let currentBalancePaidLeave = getBalancePaidLeave(name);
+    let joiningDate = getJoinsCompanyByEmployeeSheet(name);
+    let paidLeave = getPaidLeave(joiningDate);
+    updatePaidLeave(spreadId,currentBalancePaidLeave,paidLeave,name,year);
   });
-  copySheet(sheet,destSpreadSheet);
+}
+
+function autoGrantPaidLeaveTest(){
+  autoGrantPaidLeave();
 }
