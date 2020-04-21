@@ -238,7 +238,7 @@ function getPaidLeave(joiningDate){
   let jd = new Date(joiningDate);
   let now = new Date();
   let ms = now.getTime() - jd.getTime();
-  let lengthService = Math.floor(ms / (1000*60*60*24*365));
+  let lengthService = Math.floor(ms / (1000*60*60*24*30.417));
   
   if(lengthService > 0 && lengthService < 6){
     return 0;
@@ -305,4 +305,10 @@ function findColumn(sheet,val,row){
     }
   }
   return 0;
+}
+
+function test(){
+  let joiningDate = getJoinsCompanyByEmployeeSheet("社員3");
+  let paidLeave = getPaidLeave(joiningDate);
+  console.log(paidLeave);
 }
