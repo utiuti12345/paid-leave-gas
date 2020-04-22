@@ -179,10 +179,9 @@ function getBalancePaidLeave(spreadId,paidDateTime){
 }
 
 function getBalancePaidLeaveTest(){
-  var lastDate = new Date();
-  lastDate.setFullYear(lastDate.getFullYear() - 1);
-  let lastYear = lastDate.getFullYear();
-  var bpl = getBalancePaidLeave("1X0KQ5SrokGDuf1Uige2njkdOtR6gZxG3lijgLKfQ3uc","2019-01-01");
+  let now = new Date();
+  let nowDate = now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDay(); 
+  var bpl = getBalancePaidLeave("12KoRX6_okouXy_KOaSQ9qB-BsjHEPLbCYl79PKrcqmY",nowDate);
   console.log(bpl);
 }
 
@@ -204,6 +203,11 @@ function getEmployeeNames(){
     names.push(sheet.getRange(i, 2).getValue())
   }
   return names;
+}
+
+function getTest(){
+  let employeeList = getEmployeeNames();
+  let approveList = getApproveNames();
 }
 
 // 承認者シートから名前取得
@@ -277,6 +281,12 @@ function getMailAddressByApproveSheet(name){
   return sheet.getRange(row, col).getValue();
 }
 
+function getMailAddressByApproveSheetTest(){
+  let name = getMailAddressByApproveSheet("社員1");
+  let spreadId = getSpreadId("社員1");
+  console.log(name + spreadId);
+}
+
 // スプレッドシートID取得
 function getSpreadId(name){
   var sheet = getSheet(masterSpreadSheetId,employeeListSheet);
@@ -311,4 +321,9 @@ function test(){
   let joiningDate = getJoinsCompanyByEmployeeSheet("社員3");
   let paidLeave = getPaidLeave(joiningDate);
   console.log(paidLeave);
+}
+
+function sample(){
+  console.log("sample");
+  return "sample";
 }

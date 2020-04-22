@@ -26,23 +26,21 @@ function getEmployeeList() {
     try {
         google.script.run
             .withSuccessHandler(function(result) {
-                console.log("result", result);
-                
                 var select = document.getElementById('employee_id');
                 for (var i = 0; i < result.length; i++) {
                     option = document.createElement('option');
-                    option.setAttribute('value', i + 1);
+                    option.setAttribute('value', result[i]);
                     option.innerHTML = result[i];
                     select.appendChild(option);
                 }
             })
             .withFailureHandler(function(result) {
-                toastr.error('リストの取得に失敗しました。', result);
+              console.error('リストの取得に失敗しました。', result);
             })
             .getEmployeeNames();
 
     } catch (e) {
-        toastr.error(e);
+      console.error(e);
     }
 }
 
@@ -50,23 +48,21 @@ function getApproveList() {
     try {
         google.script.run
             .withSuccessHandler(function(result) {
-                console.log("result", result);
-                
                 var select = document.getElementById('approve_id');
                 for (var i = 0; i < result.length; i++) {
                     option = document.createElement('option');
-                    option.setAttribute('value', i + 1);
+                    option.setAttribute('value', result[i]);
                     option.innerHTML = result[i];
                     select.appendChild(option);
                 }
             })
             .withFailureHandler(function(result) {
-                toastr.error('リストの取得に失敗しました。', result);
+              console.error('リストの取得に失敗しました。', result);
             })
             .getApproveNames();
 
     } catch (e) {
-        toastr.error(e);
+        console.error(e);
     }
 }
 
